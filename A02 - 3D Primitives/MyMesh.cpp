@@ -275,8 +275,26 @@ void MyMesh::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions,
 	Release();
 	Init();
 
-	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	// ---- Replace this with your code ----
+	// GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	
+	// Top of cone and center of base
+	vector3 coneTop(0, a_fHeight * 0.5f, 0);
+	vector3 baseCenter(0, -a_fHeight * 0.5f, 0);
+
+	// Base angle in radians
+	float angle = glm::radians(360.0f / a_nSubdivisions);
+
+	// Loops through to draw the base and sides
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		// Adjacent points on the outer rim
+		vector3 basePt1(cos(angle * i) * a_fRadius, baseCenter.y, sin(angle * i) * a_fRadius);
+		vector3 basePt2(cos(angle * (i + 1)) * a_fRadius, baseCenter.y, sin(angle * (i + 1)) * a_fRadius);
+
+		AddTri(basePt2, baseCenter, basePt1);
+		AddTri(basePt1, coneTop, basePt2);
+	}
 	// -------------------------------
 
 	// Adding information about color
@@ -299,8 +317,34 @@ void MyMesh::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisi
 	Release();
 	Init();
 
-	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	// ---- Replace this with your code ----
+	// GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	
+	// Top/Bottom Center of the cylinder
+	vector3 topCenter(0, a_fHeight * 0.5f, 0);
+	vector3 btmCenter(0, -a_fHeight * 0.5f, 0);
+
+	// Base angle in radians
+	float angle = glm::radians(360.0f / a_nSubdivisions);
+
+	// Loops through to draw Top/Bottom Base and Sides
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		// Adjacent points along the outer rim
+		// Bottom
+		vector3 basePt1(cos(angle * i) * a_fRadius, btmCenter.y, sin(angle * i) * a_fRadius);
+		vector3 basePt2(cos(angle * (i + 1)) * a_fRadius, btmCenter.y, sin(angle * (i + 1)) * a_fRadius);
+
+		// Top
+		vector3 basePt3(cos(angle * i) * a_fRadius, topCenter.y, sin(angle * i) * a_fRadius);
+		vector3 basePt4(cos(angle * (i + 1)) * a_fRadius, topCenter.y, sin(angle * (i + 1)) * a_fRadius);
+
+		AddTri(basePt2, btmCenter, basePt1);
+		AddTri(basePt3, topCenter, basePt4);
+
+		AddQuad(basePt1, basePt2, basePt3, basePt4);
+		AddQuad(basePt4, basePt2, basePt3, basePt1);
+	}
 	// -------------------------------
 
 	// Adding information about color
@@ -329,8 +373,47 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 	Release();
 	Init();
 
-	// Replace this with your code
-	GenerateCube(a_fOuterRadius * 2.0f, a_v3Color);
+	// ---- Replace this with your code ----
+	// GenerateCube(a_fOuterRadius * 2.0f, a_v3Color);
+	
+	// Top/Bottom center of the Tube
+	vector3 topCenter(0, a_fHeight * 0.5f, 0);
+	vector3 btmCenter(0, -a_fHeight * 0.5f, 0);
+
+	// Base angle in radians
+	float angle = glm::radians(360.0f / a_nSubdivisions);
+
+	// Loops through to draw Top/Bottom Base and Sides
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		// Adjacent points along the outer rim
+		// --Outer cylinder
+		// Bottom
+		vector3 basePt1(cos(angle * i)*a_fOuterRadius, btmCenter.y, sin(angle*i)*a_fOuterRadius);
+		vector3 basePt2(cos(angle * (i + 1))*a_fOuterRadius, btmCenter.y, sin(angle*(i + 1))*a_fOuterRadius);
+
+		// Top
+		vector3 basePt3(cos(angle * i)*a_fOuterRadius, topCenter.y, sin(angle*i)*a_fOuterRadius);
+		vector3 basePt4(cos(angle * (i + 1))*a_fOuterRadius, topCenter.y, sin(angle*(i + 1))*a_fOuterRadius);
+
+		// --Inner cylinder
+		// Bottom
+		vector3 innerBasePt1(cos(angle * i)*a_fInnerRadius, btmCenter.y, sin(angle*i)*a_fInnerRadius);
+		vector3 innerBasePt2(cos(angle * (i + 1))*a_fInnerRadius, btmCenter.y, sin(angle*(i + 1))*a_fInnerRadius);
+
+		// Top
+		vector3 innerBasePt3(cos(angle * i)*a_fInnerRadius, topCenter.y, sin(angle*i)*a_fInnerRadius);
+		vector3 innerBasePt4(cos(angle * (i + 1))*a_fInnerRadius, topCenter.y, sin(angle*(i + 1))*a_fInnerRadius);
+
+		AddQuad(innerBasePt1, innerBasePt2, innerBasePt3, innerBasePt4);
+		AddQuad(innerBasePt4, innerBasePt2, innerBasePt3, innerBasePt1);
+
+		AddQuad(basePt1, basePt2, basePt3, basePt4);
+		AddQuad(basePt4, basePt2, basePt3, basePt1);
+
+		AddQuad(basePt1, basePt2, innerBasePt1, innerBasePt2);
+		AddQuad(innerBasePt3, innerBasePt4, basePt3, basePt4);
+	}
 	// -------------------------------
 
 	// Adding information about color
@@ -361,7 +444,8 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 	Release();
 	Init();
 
-	// Replace this with your code
+	// EXTRA CREDIT
+	// ---- Replace this with your code ----
 	GenerateCube(a_fOuterRadius * 2.0f, a_v3Color);
 	// -------------------------------
 
@@ -386,8 +470,32 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 	Release();
 	Init();
 
-	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	// ---- Replace this with your code ----
+	// GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	
+	// Loops through each horizontal level of sphere, and draws the quad
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		// Theta (horizontal) angles
+		float thetaAngle1 = 2 * PI / a_nSubdivisions * i;
+		float thetaAngle2 = 2 * PI / a_nSubdivisions * (i + 1);
+
+		// Loops through each vertical level of sphere
+		for (int j = 0; j < a_nSubdivisions; j++)
+		{
+			// Phi (vertical) angles
+			float phiAngle1 = PI / a_nSubdivisions * (j + 1);
+			float phiAngle2 = PI / a_nSubdivisions * j;
+
+			// Create the points of the quad
+			vector3 quadPt1(a_fRadius * cos(thetaAngle1)*sin(phiAngle1), a_fRadius * sin(thetaAngle1) * sin(phiAngle1), a_fRadius * cos(phiAngle1));
+			vector3 quadPt2(a_fRadius * cos(thetaAngle1)*sin(phiAngle2), a_fRadius * sin(thetaAngle1) * sin(phiAngle2), a_fRadius * cos(phiAngle2));
+			vector3 quadPt3(a_fRadius * cos(thetaAngle2)*sin(phiAngle1), a_fRadius * sin(thetaAngle2) * sin(phiAngle1), a_fRadius * cos(phiAngle1));
+			vector3 quadPt4(a_fRadius * cos(thetaAngle2)*sin(phiAngle2), a_fRadius * sin(thetaAngle2) * sin(phiAngle2), a_fRadius * cos(phiAngle2));
+
+			AddQuad(quadPt1, quadPt2, quadPt3, quadPt4);
+		}
+	}
 	// -------------------------------
 
 	// Adding information about color
