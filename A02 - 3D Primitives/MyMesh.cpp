@@ -121,7 +121,7 @@ void MyMesh::Render(matrix4 a_mProjection, matrix4 a_mView, matrix4 a_mModel)
 {
 	// Use the buffer and shader
 	GLuint nShader = m_pShaderMngr->GetShaderID("Basic");
-	glUseProgram(nShader); 
+	glUseProgram(nShader);
 
 	//Bind the VAO of this object
 	glBindVertexArray(m_VAO);
@@ -133,11 +133,11 @@ void MyMesh::Render(matrix4 a_mProjection, matrix4 a_mView, matrix4 a_mModel)
 	//Final Projection of the Camera
 	matrix4 m4MVP = a_mProjection * a_mView * a_mModel;
 	glUniformMatrix4fv(MVP, 1, GL_FALSE, glm::value_ptr(m4MVP));
-	
+
 	//Solid
 	glUniform3f(wire, -1.0f, -1.0f, -1.0f);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDrawArrays(GL_TRIANGLES, 0, m_uVertexCount);  
+	glDrawArrays(GL_TRIANGLES, 0, m_uVertexCount);
 
 	//Wire
 	glUniform3f(wire, 1.0f, 0.0f, 1.0f);
@@ -186,15 +186,15 @@ void MyMesh::GenerateCube(float a_fSize, vector3 a_v3Color)
 	//|  |
 	//0--1
 
-	vector3 point0(-fValue,-fValue, fValue); //0
-	vector3 point1( fValue,-fValue, fValue); //1
-	vector3 point2( fValue, fValue, fValue); //2
+	vector3 point0(-fValue, -fValue, fValue); //0
+	vector3 point1(fValue, -fValue, fValue); //1
+	vector3 point2(fValue, fValue, fValue); //2
 	vector3 point3(-fValue, fValue, fValue); //3
 
-	vector3 point4(-fValue,-fValue,-fValue); //4
-	vector3 point5( fValue,-fValue,-fValue); //5
-	vector3 point6( fValue, fValue,-fValue); //6
-	vector3 point7(-fValue, fValue,-fValue); //7
+	vector3 point4(-fValue, -fValue, -fValue); //4
+	vector3 point5(fValue, -fValue, -fValue); //5
+	vector3 point6(fValue, fValue, -fValue); //6
+	vector3 point7(-fValue, fValue, -fValue); //7
 
 	//F
 	AddQuad(point0, point1, point3, point2);
@@ -277,7 +277,7 @@ void MyMesh::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions,
 
 	// ---- Replace this with your code ----
 	// GenerateCube(a_fRadius * 2.0f, a_v3Color);
-	
+
 	// Top of cone and center of base
 	vector3 coneTop(0, a_fHeight * 0.5f, 0);
 	vector3 baseCenter(0, -a_fHeight * 0.5f, 0);
@@ -319,7 +319,7 @@ void MyMesh::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisi
 
 	// ---- Replace this with your code ----
 	// GenerateCube(a_fRadius * 2.0f, a_v3Color);
-	
+
 	// Top/Bottom Center of the cylinder
 	vector3 topCenter(0, a_fHeight * 0.5f, 0);
 	vector3 btmCenter(0, -a_fHeight * 0.5f, 0);
@@ -375,7 +375,7 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 
 	// ---- Replace this with your code ----
 	// GenerateCube(a_fOuterRadius * 2.0f, a_v3Color);
-	
+
 	// Top/Bottom center of the Tube
 	vector3 topCenter(0, a_fHeight * 0.5f, 0);
 	vector3 btmCenter(0, -a_fHeight * 0.5f, 0);
@@ -420,6 +420,8 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 	CompleteMesh(a_v3Color);
 	CompileOpenGL3X();
 }
+
+// EXTRA CREDIT: Complete
 void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSubdivisionsA, int a_nSubdivisionsB, vector3 a_v3Color)
 {
 	if (a_fOuterRadius < 0.01f)
@@ -444,15 +446,78 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 	Release();
 	Init();
 
-	// EXTRA CREDIT
 	// ---- Replace this with your code ----
-	GenerateCube(a_fOuterRadius * 2.0f, a_v3Color);
+	// GenerateCube(a_fOuterRadius * 2.0f, a_v3Color);
+
+	// Radius of the torus
+	float radius = (a_fOuterRadius - a_fInnerRadius) / 2.0f;
+
+	// List of verticies
+	std::vector<vector3> vertex;
+
+	// Rotation for the circles
+	float rotate1 = 360 / a_nSubdivisionsA;
+	float rotate2 = 360 / a_nSubdivisionsB;
+
+	// Horizontal part of the torus
+	for (int i = 0; i < a_nSubdivisionsA; i++) 
+	{
+		// Center position for the filler
+		vector3 center = vector3((a_fInnerRadius + radius) * sin(glm::radians(rotate1 * i)), 0, (a_fInnerRadius + radius) * cos(glm::radians(rotate1 * i)));
+
+		// Rotation matrix
+		glm::mat3 rotateMatrix;
+
+		// Face out from the center of the torus
+		rotateMatrix[0][0] = sin(glm::radians(rotate1 * i));
+		rotateMatrix[0][2] = cos(glm::radians(rotate1 * i));
+		rotateMatrix[1][1] = 1;
+		rotateMatrix[2][0] = cos(glm::radians(rotate1 * i));
+		rotateMatrix[2][2] = -sin(glm::radians(rotate1 * i));
+
+		// Vertical part of the torus
+		for (int j = 0; j < a_nSubdivisionsB; j++) 
+		{
+			// Add the vertex that angle outward around the center point
+			vertex.push_back(center + rotateMatrix * vector3(radius * sin(glm::radians(rotate2 * j)), radius * cos(glm::radians(rotate2 * j)), 0));
+		}
+	}
+
+	// Calculate the sub divisions
+	int subNum = a_nSubdivisionsA * a_nSubdivisionsB;
+
+	// Draw the torus from the list of vertices
+	for (int i = 0; i < subNum; i++) 
+	{
+		// Verticies for the quad
+		int vert2 = (i + 1 < subNum) ? i + 1 : (i + 1) - subNum;
+		int vert3 = (i + a_nSubdivisionsB < subNum) ? i + a_nSubdivisionsB : (i + a_nSubdivisionsB) - subNum;
+		int vert4 = (i + a_nSubdivisionsB + 1 < subNum) ? i + a_nSubdivisionsB + 1 : (i + a_nSubdivisionsB + 1) - subNum;
+
+		AddQuad(vertex[i], vertex[vert2], vertex[vert3], vertex[vert4]);
+	}
 	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
 	CompileOpenGL3X();
 }
+
+// Structure created for sphere: triangle will make up the shape
+struct StructureSphere
+{
+	// Triangle vectors
+	vector3 v1, v2, v3;
+
+	// Generate triangle
+	StructureSphere(vector3 _v1, vector3 _v2, vector3 _v3) 
+	{
+		v1 = _v1;
+		v2 = _v2;
+		v3 = _v3;
+	}
+};
+
 void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Color)
 {
 	if (a_fRadius < 0.01f)
@@ -472,33 +537,141 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 
 	// ---- Replace this with your code ----
 	// GenerateCube(a_fRadius * 2.0f, a_v3Color);
-	
-	// Loops through each horizontal level of sphere, and draws the quad
-	for (int i = 0; i < a_nSubdivisions; i++)
+
+	// Lists of vertices and triangles
+	std::vector<vector3> vertex;
+	std::vector<StructureSphere> triangle;
+
+	// Unit Sphere size
+	float unitSize = (2 + (float)glm::sqrt(5.0)) / 2.0f;
+
+	// Create base verticies
+	for (int i = 0; i < 12; i++) 
 	{
-		// Theta (horizontal) angles
-		float thetaAngle1 = 2 * PI / a_nSubdivisions * i;
-		float thetaAngle2 = 2 * PI / a_nSubdivisions * (i + 1);
+		// Offset the rectangle and unit size
+		float tri = (i % 4 < 2) ? unitSize : unitSize * -1;
+		int offset = (i % 2 == 0) ? -1 : 1;
 
-		// Loops through each vertical level of sphere
-		for (int j = 0; j < a_nSubdivisions; j++)
+		// Calculate the length from the center
+		float length = glm::sqrt(1 + (tri * tri));
+
+		// Set the vertex for every three rectangles
+		if (i < 4)
 		{
-			// Phi (vertical) angles
-			float phiAngle1 = PI / a_nSubdivisions * (j + 1);
-			float phiAngle2 = PI / a_nSubdivisions * j;
-
-			// Create the points of the quad
-			vector3 quadPt1(a_fRadius * cos(thetaAngle1)*sin(phiAngle1), a_fRadius * sin(thetaAngle1) * sin(phiAngle1), a_fRadius * cos(phiAngle1));
-			vector3 quadPt2(a_fRadius * cos(thetaAngle1)*sin(phiAngle2), a_fRadius * sin(thetaAngle1) * sin(phiAngle2), a_fRadius * cos(phiAngle2));
-			vector3 quadPt3(a_fRadius * cos(thetaAngle2)*sin(phiAngle1), a_fRadius * sin(thetaAngle2) * sin(phiAngle1), a_fRadius * cos(phiAngle1));
-			vector3 quadPt4(a_fRadius * cos(thetaAngle2)*sin(phiAngle2), a_fRadius * sin(thetaAngle2) * sin(phiAngle2), a_fRadius * cos(phiAngle2));
-
-			AddQuad(quadPt1, quadPt2, quadPt3, quadPt4);
-		}
+			vertex.push_back((vector3(offset, tri, 0) / length) * a_fRadius);
+		}			
+		else if (i < 8) 
+		{
+			vertex.push_back((vector3(0, offset, tri) / length) * a_fRadius);
+		}			
+		else
+		{
+			vertex.push_back((vector3(tri, 0, offset) / length) * a_fRadius);
+		}			
 	}
+
+	// Create triangles for the sphere
+	triangle.push_back(StructureSphere(vertex[0], vertex[11], vertex[5]));
+	triangle.push_back(StructureSphere(vertex[0], vertex[5], vertex[1]));
+	triangle.push_back(StructureSphere(vertex[0], vertex[1], vertex[7]));
+	triangle.push_back(StructureSphere(vertex[0], vertex[7], vertex[10]));
+	triangle.push_back(StructureSphere(vertex[0], vertex[10], vertex[11]));
+
+	triangle.push_back(StructureSphere(vertex[3], vertex[9], vertex[4]));
+	triangle.push_back(StructureSphere(vertex[3], vertex[4], vertex[2]));
+	triangle.push_back(StructureSphere(vertex[3], vertex[2], vertex[6]));
+	triangle.push_back(StructureSphere(vertex[3], vertex[6], vertex[8]));
+	triangle.push_back(StructureSphere(vertex[3], vertex[8], vertex[9]));
+
+	triangle.push_back(StructureSphere(vertex[1], vertex[5], vertex[9]));
+	triangle.push_back(StructureSphere(vertex[5], vertex[11], vertex[4]));
+	triangle.push_back(StructureSphere(vertex[11], vertex[10], vertex[2]));
+	triangle.push_back(StructureSphere(vertex[10], vertex[7], vertex[6]));
+	triangle.push_back(StructureSphere(vertex[7], vertex[1], vertex[8]));
+
+	triangle.push_back(StructureSphere(vertex[4], vertex[9], vertex[5]));
+	triangle.push_back(StructureSphere(vertex[2], vertex[4], vertex[11]));
+	triangle.push_back(StructureSphere(vertex[6], vertex[2], vertex[10]));
+	triangle.push_back(StructureSphere(vertex[8], vertex[6], vertex[7]));
+	triangle.push_back(StructureSphere(vertex[9], vertex[8], vertex[1]));
+
+	// Make smaller triangles for larger triangles
+	for (int i = 1; i < a_nSubdivisions; i++) 
+	{
+		// New list of triangles
+		std::vector<StructureSphere> miniTriangle;
+
+		// Make new positions for triangles and add to the list
+		for each (StructureSphere t in triangle)
+		{
+			// Get the sub positions for new triangles
+			vector3 sub1 = (t.v1 + t.v2) / 2.0f;
+			vector3 sub2 = (t.v2 + t.v3) / 2.0f;
+			vector3 sub3 = (t.v3 + t.v1) / 2.0f;
+
+			// Calculate the length of the positions
+			float length1 = glm::sqrt((sub1.x * sub1.x) + (sub1.y * sub1.y) + (sub1.z * sub1.z));
+			float length2 = glm::sqrt((sub2.x * sub2.x) + (sub2.y * sub2.y) + (sub2.z * sub2.z));
+			float length3 = glm::sqrt((sub3.x * sub3.x) + (sub3.y * sub3.y) + (sub3.z * sub3.z));
+
+			// Normalize the position for the subdivisions
+			sub1 = (sub1 / length1) * a_fRadius;
+			sub2 = (sub2 / length2) * a_fRadius;
+			sub3 = (sub3 / length3) * a_fRadius;
+
+			// Add the triangle to the list
+			miniTriangle.push_back(StructureSphere(t.v1, sub1, sub3));
+			miniTriangle.push_back(StructureSphere(t.v2, sub2, sub1));
+			miniTriangle.push_back(StructureSphere(t.v3, sub3, sub2));
+			miniTriangle.push_back(StructureSphere(sub1, sub2, sub3));
+		}
+
+		// Clear old list
+		triangle.clear();
+
+		// Set the old list to the new face list
+		triangle = miniTriangle;
+		miniTriangle.clear();
+	}
+
+	// Loops through to draw triangles
+	for (int i = 0; i < triangle.size(); i++) 
+	{
+		AddTri(triangle[i].v1, triangle[i].v2, triangle[i].v3);
+	}
+
+	triangle.clear();
 	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
 	CompileOpenGL3X();
+
+	/*
+	---> Sort of makes a sphere, but way too simple. Try Triangles instead of Quads
+	---> UPDATE: Need to make a struct that creates triangles that can make up the sphere.
+
+	// Loops through each horizontal level of sphere, and draws the quad
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+	// Theta (horizontal) angles
+	float thetaAngle1 = 2 * PI / a_nSubdivisions * i;
+	float thetaAngle2 = 2 * PI / a_nSubdivisions * (i + 1);
+
+	// Loops through each vertical level of sphere
+	for (int j = 0; j < a_nSubdivisions; j++)
+	{
+	// Phi (vertical) angles
+	float phiAngle1 = PI / a_nSubdivisions * (j + 1);
+	float phiAngle2 = PI / a_nSubdivisions * j;
+
+	// Create the points of the quad
+	vector3 quadPt1(a_fRadius * cos(thetaAngle1) * sin(phiAngle1), a_fRadius * sin(thetaAngle1) * sin(phiAngle1), a_fRadius * cos(phiAngle1));
+	vector3 quadPt2(a_fRadius * cos(thetaAngle1) * sin(phiAngle2), a_fRadius * sin(thetaAngle1) * sin(phiAngle2), a_fRadius * cos(phiAngle2));
+	vector3 quadPt3(a_fRadius * cos(thetaAngle2) * sin(phiAngle1), a_fRadius * sin(thetaAngle2) * sin(phiAngle1), a_fRadius * cos(phiAngle1));
+	vector3 quadPt4(a_fRadius * cos(thetaAngle2) * sin(phiAngle2), a_fRadius * sin(thetaAngle2) * sin(phiAngle2), a_fRadius * cos(phiAngle2));
+
+	AddQuad(quadPt1, quadPt2, quadPt3, quadPt4);
+	}
+	*/
 }
