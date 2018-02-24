@@ -17,6 +17,7 @@ class Application
 	matrix4 m_m4Model = IDENTITY_M4;
 	quaternion m_qOrientation;
 	vector3 m_v3Rotation;
+	vector3 m_axis;
 	MyMesh* m_pMesh = nullptr;
 	String m_sProgrammer = "JaJuan Webster - jxw7456@rit.edu";
 
