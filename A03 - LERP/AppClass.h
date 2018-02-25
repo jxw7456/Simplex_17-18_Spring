@@ -20,8 +20,8 @@ class Application
 {
 	uint m_uOrbits = 0; //number of shapes starting at 3 and increasing in sides
 	std::vector<uint> m_shapeList; //shape index for circles
-	std::vector<std::vector<vector3>> orbits; // list of orbits
-	std::vector<uint> stops; // list of control variables for stops
+	std::vector<std::vector<vector3>> m_orbits; // list of orbits
+	std::vector<uint> m_stops; // list of control variables for stops
 	String m_sProgrammer = "JaJuan Webster - jxw7456@rit.edu";
 	
 private:
