@@ -67,10 +67,21 @@ void Application::ProcessMouseScroll(sf::Event a_event)
 //Keyboard
 void Application::ProcessKeyPressed(sf::Event a_event)
 {
+	// X, Y, Z input
+	// Only rotate when they are pressed
 	switch (a_event.key.code)
 	{
 	default: break;
 	case sf::Keyboard::Space:
+		break;
+	case sf::Keyboard::X:
+		m_axis.x = 1;
+		break;
+	case sf::Keyboard::Y:
+		m_axis.y = 1;
+		break;
+	case sf::Keyboard::Z:
+		m_axis.z = 1;
 		break;
 	}
 	//gui
@@ -129,6 +140,15 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 					m_uActCont = 7;
 			}
 		}
+		break;
+	case sf::Keyboard::X:
+		m_axis.x = 0;
+		break;
+	case sf::Keyboard::Y:
+		m_axis.y = 0;
+		break;
+	case sf::Keyboard::Z:
+		m_axis.z = 0;
 		break;
 	}
 

@@ -16,6 +16,7 @@ void Application::Update(void)
 
 	//Is the first person camera active?
 	CameraRotation();
+
 }
 void Application::Display(void)
 {
@@ -25,22 +26,18 @@ void Application::Display(void)
 	matrix4 m4View = m_pCameraMngr->GetViewMatrix();
 	matrix4 m4Projection = m_pCameraMngr->GetProjectionMatrix();
 	
-	/* GIMBAL LOCK
+	/* 
+	GIMBAL LOCK
 	m_m4Model = glm::rotate(IDENTITY_M4, m_v3Rotation.x, vector3(1.0f, 0.0f, 0.0f));
 	m_m4Model = glm::rotate(m_m4Model, m_v3Rotation.y, vector3(0.0f, 1.0f, 0.0f));
 	m_m4Model = glm::rotate(m_m4Model, m_v3Rotation.z, vector3(0.0f, 0.0f, 1.0f));
-	*/
+	*/	
 
-	// Get the magnitude
-	float magnitude = m_axis.length();
-	
-	if (magnitude > 0)
-	{
-		// Create a unit vector
-		vector3 rotation((m_axis.x / magnitude), (m_axis.y / magnitude), (m_axis.z / magnitude));
-		m_qOrientation = m_qOrientation * glm::angleAxis(1.0f, rotation);
-	}
-	
+	// Rotation on axis
+	m_qOrientation = m_qOrientation * glm::angleAxis(m_axis.x, AXIS_X);
+	m_qOrientation = m_qOrientation * glm::angleAxis(m_axis.y, AXIS_Y);
+	m_qOrientation = m_qOrientation * glm::angleAxis(m_axis.z, AXIS_Z);
+
 	m_pMesh->Render(m4Projection, m4View, ToMatrix4(m_qOrientation));
 	
 	// draw a skybox
