@@ -12,9 +12,17 @@ namespace Simplex
 
 class MyCamera
 {
+	// Variables
+
 	vector3 m_v3Position = vector3(0.0f, 0.0f, 10.0f); //Where my camera is located
 	vector3 m_v3Target = vector3(0.0f, 0.0f, 0.0f); //What I'm looking at
-	vector3 m_v3Up = vector3(0.0f, 1.0f, 0.0f); //What is up
+	vector3 m_v3Up = vector3(0.0f, 1.0f, 0.0f); //What is up	
+	vector3 m_v3Forward = vector3(0.0f, 0.0f, -1.0f); // Moving Forward
+	vector3 m_v3Right = vector3(1.0f, 0.0f, 0.0f); // Moving Right
+	vector3 m_v3Upward = vector3(0.0f, 1.0f, 0.0f); // Moving Upward
+
+	glm::quat xRotation = glm::quat(0.0f, 0.0f, 0.0f, 0.0f); // Rotation X
+	glm::quat yRotation = glm::quat(0.0f, 0.0f, 0.0f, 0.0f); // Rotation Y
 
 	bool m_bPerspective = true; //perspective view? False is Orthographic
 
@@ -211,6 +219,31 @@ public:
 	OUTPUT: ---
 	*/
 	void CalculateProjectionMatrix(void);
+
+	/*
+	USAGE: Moves the camera forward and backward
+	ARGUMENTS:
+	-	float a_fSpeed -> The speed/distance that the camera moves
+	OUTPUT: ---
+	*/
+	void MoveForward(float a_fSpeed);
+
+	/*
+	USAGE: Move the camera sideways (left or right)
+	ARGUMENTS:
+	-	float a_fSpeed -> The speed/distance that the camera moves
+	OUTPUT: ---
+	*/
+	void MoveSideways(float a_fSpeed);
+
+	/*
+	USAGE:
+	ARGUMENTS:
+	-	float a_fAngleX -> The angle used in calculating x rotation
+	-	float a_fAngleY -> The angle used in calculating y rotation
+	OUTPUT: ---
+	*/
+	void ChangePitchYaw(float a_fAngleX, float a_fAngleY);
 };
 
 } //namespace Simplex

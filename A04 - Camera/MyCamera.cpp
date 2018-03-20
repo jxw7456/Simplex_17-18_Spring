@@ -154,3 +154,15 @@ void Simplex::MyCamera::CalculateProjectionMatrix(void)
 										m_v2NearFar.x, m_v2NearFar.y); //near and far
 	}
 }
+
+void Simplex::MyCamera::MoveForward(float a_fSpeed)
+{
+}
+
+void Simplex::MyCamera::MoveSideways(float a_fSpeed)
+{
+}
+
+void Simplex::MyCamera::ChangePitchYaw(float a_fAngleX, float a_fAngleY)
+{
+}
