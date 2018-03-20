@@ -157,12 +157,43 @@ void Simplex::MyCamera::CalculateProjectionMatrix(void)
 
 void Simplex::MyCamera::MoveForward(float a_fSpeed)
 {
+	// Apply the Forward movement to the Position, Target, and Up Vectors
+	m_v3Position += m_v3Forward * a_fSpeed;
+	m_v3Target += m_v3Forward * a_fSpeed;
+	m_v3Up += m_v3Forward * a_fSpeed;
+
+	// Normalize the vectors at the new positions
+	m_v3Forward = glm::normalize(m_v3Target - m_v3Position);
+	m_v3Upward = glm::normalize(m_v3Up - m_v3Position);
+	m_v3Right = glm::normalize(glm::cross(m_v3Forward, m_v3Upward));
+
+	CalculateProjectionMatrix();
 }
 
 void Simplex::MyCamera::MoveSideways(float a_fSpeed)
 {
+	// Apply the Right movement to the Position, Target, and Up Vectors
+	m_v3Position += m_v3Right * a_fSpeed;
+	m_v3Target += m_v3Right * a_fSpeed;
+	m_v3Up += m_v3Right * a_fSpeed;
+
+	// Normalize the vectors at the new positions
+	m_v3Forward = glm::normalize(m_v3Target - m_v3Position);
+	m_v3Upward = glm::normalize(m_v3Up - m_v3Position);
+	m_v3Right = glm::normalize(glm::cross(m_v3Forward, m_v3Upward));
+
+	CalculateProjectionMatrix();
 }
 
 void Simplex::MyCamera::ChangePitchYaw(float a_fAngleX, float a_fAngleY)
 {
+	// Calculate the X and Y Quaternions with the two angles
+	glm::quat rotationX = glm::angleAxis(glm::radians(a_fAngleX), m_v3Right);
+	glm::quat rotationY = glm::angleAxis(glm::radians(a_fAngleY), m_v3Upward);
+
+	// Update the vectors after the rotation
+	m_v3Up = m_v3Position + m_v3Upward;
+	m_v3Forward = glm::rotate(glm::cross(rotationX, rotationY), glm::normalize(m_v3Target - m_v3Position));
+	m_v3Right = glm::normalize(glm::cross(m_v3Forward, m_v3Upward));
+	m_v3Target = m_v3Position + m_v3Forward;
 }

@@ -64,7 +64,7 @@ int MyMeshManager::GenerateCuboid(vector3 a_v3Dimensions, vector3 a_v3Color)
 int MyMeshManager::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions, vector3 a_v3Color)
 {
 	MyMesh* pMesh = new MyMesh();
-	pMesh->GenerateCone(a_fRadius, a_fHeight, a_nSubdivisions, a_v3Color);
+	pMesh->GenerateCone(a_fRadius, a_fHeight, a_nSubdivisions, C_BLUE);
 	return AddMesh(pMesh);
 }
 int MyMeshManager::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisions, vector3 a_v3Color)

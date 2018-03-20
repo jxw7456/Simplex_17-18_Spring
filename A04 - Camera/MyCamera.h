@@ -21,8 +21,8 @@ class MyCamera
 	vector3 m_v3Right = vector3(1.0f, 0.0f, 0.0f); // Moving Right
 	vector3 m_v3Upward = vector3(0.0f, 1.0f, 0.0f); // Moving Upward
 
-	glm::quat xRotation = glm::quat(0.0f, 0.0f, 0.0f, 0.0f); // Rotation X
-	glm::quat yRotation = glm::quat(0.0f, 0.0f, 0.0f, 0.0f); // Rotation Y
+	glm::quat rotationX = glm::quat(0.0f, 0.0f, 0.0f, 0.0f); // Rotation X
+	glm::quat rotationY = glm::quat(0.0f, 0.0f, 0.0f, 0.0f); // Rotation Y
 
 	bool m_bPerspective = true; //perspective view? False is Orthographic
 
