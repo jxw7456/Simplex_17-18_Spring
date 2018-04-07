@@ -1,49 +1,4 @@
 #include "MyMesh.h"
-using namespace Simplex;
-
-void MyMesh::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions, vector3 a_v3Color)
-{
-	if (a_fRadius < 0.01f)
-		a_fRadius = 0.01f;
-
-	if (a_fHeight < 0.01f)
-		a_fHeight = 0.01f;
-
-	if (a_nSubdivisions < 3)
-		a_nSubdivisions = 3;
-	if (a_nSubdivisions > 360)
-		a_nSubdivisions = 360;
-
-	Release();
-	Init();
-
-	// Replace this with your code:
-	//-------------------------------------------------------------------
-	// GenerateCube(a_fRadius, C_RED); //Remember AddTri and AddVertexPosition are your friends. 
-	// Create Top of Cone and Center of the Base
-	vector3 v3Top(0, -a_fHeight, 0);
-	vector3 v3Center(0, 0, 0);
-
-	// Base angle
-	float fAngle = glm::radians(360.0f / a_nSubdivisions);
-
-	// For loop to draw the base/sides of the cone
-	for (int i = 0; i < a_nSubdivisions; i++)
-	{
-		// Create the adjacent sides of the cone with the angle and radius
-		vector3 v3BasePt1(cos(fAngle * i) * a_fRadius, v3Center.y, sin(fAngle * i) * a_fRadius);
-		vector3 v3BasePt2(cos(fAngle * (i + 1)) * a_fRadius, v3Center.y, sin(fAngle * (i + 1)) * a_fRadius);
-
-		// AddTri
-		AddTri(v3BasePt2, v3Center, v3BasePt1);
-		AddTri(v3BasePt1, v3Top, v3BasePt2);
-	}
-	//-------------------------------------------------------------------
-	//No need for changes below this line
-	CompleteMesh(a_v3Color);// Adding information about color
-	CompileOpenGL3X();//Compiling the mesh
-}
-//No need to modify anything past this point-----------------------------------------------
 void MyMesh::Init(void)
 {
 	m_bBinded = false;
@@ -194,7 +149,6 @@ void MyMesh::Render(matrix4 a_mProjection, matrix4 a_mView, matrix4 a_mModel)
 
 	glBindVertexArray(0);// Unbind VAO so it does not get in the way of other objects
 }
-
 void MyMesh::AddTri(vector3 a_vBottomLeft, vector3 a_vBottomRight, vector3 a_vTopLeft)
 {
 	//C
@@ -305,46 +259,57 @@ void MyMesh::GenerateCuboid(vector3 a_v3Dimensions, vector3 a_v3Color)
 	CompleteMesh(a_v3Color);
 	CompileOpenGL3X();
 }
+void MyMesh::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions, vector3 a_v3Color)
+{
+	if (a_fRadius < 0.01f)
+		a_fRadius = 0.01f;
+
+	if (a_fHeight < 0.01f)
+		a_fHeight = 0.01f;
+
+	if (a_nSubdivisions < 3)
+		a_nSubdivisions = 3;
+	if (a_nSubdivisions > 360)
+		a_nSubdivisions = 360;
+
+	Release();
+	Init();
+
+	// Replace this with your code
+	Mesh* pMesh = new Mesh();
+	pMesh->GenerateCone(a_fRadius, a_fHeight, a_nSubdivisions, a_v3Color);
+	m_lVertexPos = pMesh->GetVertexList();
+	m_uVertexCount = m_lVertexPos.size();
+	SafeDelete(pMesh);
+	// -------------------------------
+
+	// Adding information about color
+	CompleteMesh(a_v3Color);
+	CompileOpenGL3X();
+}
 void MyMesh::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisions, vector3 a_v3Color)
 {
 	if (a_fRadius < 0.01f)
 		a_fRadius = 0.01f;
 
+	if (a_fHeight < 0.01f)
+		a_fHeight = 0.01f;
+
+	if (a_nSubdivisions < 3)
+		a_nSubdivisions = 3;
+	if (a_nSubdivisions > 360)
+		a_nSubdivisions = 360;
+
 	Release();
 	Init();
 
-	float fValue = a_fRadius * 0.5f;
-	//3--2
-	//|  |
-	//0--1
-
-	vector3 point0(-fValue, -fValue, fValue); //0
-	vector3 point1(fValue, -fValue, fValue); //1
-	vector3 point2(fValue, fValue, fValue); //2
-	vector3 point3(-fValue, fValue, fValue); //3
-
-	vector3 point4(-fValue, -fValue, -fValue); //4
-	vector3 point5(fValue, -fValue, -fValue); //5
-	vector3 point6(fValue, fValue, -fValue); //6
-	vector3 point7(-fValue, fValue, -fValue); //7
-
-											  //F
-	AddQuad(point0, point1, point3, point2);
-
-	//B
-	AddQuad(point5, point4, point6, point7);
-
-	//L
-	AddQuad(point4, point0, point7, point3);
-
-	//R
-	AddQuad(point1, point5, point2, point6);
-
-	//U
-	AddQuad(point3, point2, point7, point6);
-
-	//D
-	AddQuad(point4, point5, point0, point1);
+	// Replace this with your code
+	Mesh* pMesh = new Mesh();
+	pMesh->GenerateCylinder(a_fRadius, a_fHeight, a_nSubdivisions, a_v3Color);
+	m_lVertexPos = pMesh->GetVertexList();
+	m_uVertexCount = m_lVertexPos.size();
+	SafeDelete(pMesh);
+	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
@@ -355,41 +320,30 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 	if (a_fOuterRadius < 0.01f)
 		a_fOuterRadius = 0.01f;
 
+	if (a_fInnerRadius < 0.005f)
+		a_fInnerRadius = 0.005f;
+
+	if (a_fInnerRadius > a_fOuterRadius)
+		std::swap(a_fInnerRadius, a_fOuterRadius);
+
+	if (a_fHeight < 0.01f)
+		a_fHeight = 0.01f;
+
+	if (a_nSubdivisions < 3)
+		a_nSubdivisions = 3;
+	if (a_nSubdivisions > 360)
+		a_nSubdivisions = 360;
+
 	Release();
 	Init();
 
-	float fValue = a_fOuterRadius * 0.5f;
-	//3--2
-	//|  |
-	//0--1
-
-	vector3 point0(-fValue, -fValue, fValue); //0
-	vector3 point1(fValue, -fValue, fValue); //1
-	vector3 point2(fValue, fValue, fValue); //2
-	vector3 point3(-fValue, fValue, fValue); //3
-
-	vector3 point4(-fValue, -fValue, -fValue); //4
-	vector3 point5(fValue, -fValue, -fValue); //5
-	vector3 point6(fValue, fValue, -fValue); //6
-	vector3 point7(-fValue, fValue, -fValue); //7
-
-											  //F
-	AddQuad(point0, point1, point3, point2);
-
-	//B
-	AddQuad(point5, point4, point6, point7);
-
-	//L
-	AddQuad(point4, point0, point7, point3);
-
-	//R
-	AddQuad(point1, point5, point2, point6);
-
-	//U
-	AddQuad(point3, point2, point7, point6);
-
-	//D
-	AddQuad(point4, point5, point0, point1);
+	// Replace this with your code
+	Mesh* pMesh = new Mesh();
+	pMesh->GenerateTube(a_fOuterRadius, a_fInnerRadius, a_fHeight, a_nSubdivisions, a_v3Color);
+	m_lVertexPos = pMesh->GetVertexList();
+	m_uVertexCount = m_lVertexPos.size();
+	SafeDelete(pMesh);
+	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
@@ -400,41 +354,32 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 	if (a_fOuterRadius < 0.01f)
 		a_fOuterRadius = 0.01f;
 
+	if (a_fInnerRadius < 0.005f)
+		a_fInnerRadius = 0.005f;
+
+	if (a_fInnerRadius > a_fOuterRadius)
+		std::swap(a_fInnerRadius, a_fOuterRadius);
+
+	if (a_nSubdivisionsA < 3)
+		a_nSubdivisionsA = 3;
+	if (a_nSubdivisionsA > 360)
+		a_nSubdivisionsA = 360;
+
+	if (a_nSubdivisionsB < 3)
+		a_nSubdivisionsB = 3;
+	if (a_nSubdivisionsB > 360)
+		a_nSubdivisionsB = 360;
+
 	Release();
 	Init();
 
-	float fValue = a_fOuterRadius * 0.5f;
-	//3--2
-	//|  |
-	//0--1
-
-	vector3 point0(-fValue, -fValue, fValue); //0
-	vector3 point1(fValue, -fValue, fValue); //1
-	vector3 point2(fValue, fValue, fValue); //2
-	vector3 point3(-fValue, fValue, fValue); //3
-
-	vector3 point4(-fValue, -fValue, -fValue); //4
-	vector3 point5(fValue, -fValue, -fValue); //5
-	vector3 point6(fValue, fValue, -fValue); //6
-	vector3 point7(-fValue, fValue, -fValue); //7
-
-											  //F
-	AddQuad(point0, point1, point3, point2);
-
-	//B
-	AddQuad(point5, point4, point6, point7);
-
-	//L
-	AddQuad(point4, point0, point7, point3);
-
-	//R
-	AddQuad(point1, point5, point2, point6);
-
-	//U
-	AddQuad(point3, point2, point7, point6);
-
-	//D
-	AddQuad(point4, point5, point0, point1);
+	// Replace this with your code
+	Mesh* pMesh = new Mesh();
+	pMesh->GenerateTorus(a_fOuterRadius, a_fInnerRadius, a_nSubdivisionsA, a_nSubdivisionsB, a_v3Color);
+	m_lVertexPos = pMesh->GetVertexList();
+	m_uVertexCount = m_lVertexPos.size();
+	SafeDelete(pMesh);
+	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
@@ -445,41 +390,25 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 	if (a_fRadius < 0.01f)
 		a_fRadius = 0.01f;
 
+	//Sets minimum and maximum of subdivisions
+	if (a_nSubdivisions < 1)
+	{
+		GenerateCube(a_fRadius * 2.0f, a_v3Color);
+		return;
+	}
+	if (a_nSubdivisions > 6)
+		a_nSubdivisions = 6;
+
 	Release();
 	Init();
 
-	float fValue = a_fRadius * 0.5f;
-	//3--2
-	//|  |
-	//0--1
-
-	vector3 point0(-fValue, -fValue, fValue); //0
-	vector3 point1(fValue, -fValue, fValue); //1
-	vector3 point2(fValue, fValue, fValue); //2
-	vector3 point3(-fValue, fValue, fValue); //3
-
-	vector3 point4(-fValue, -fValue, -fValue); //4
-	vector3 point5(fValue, -fValue, -fValue); //5
-	vector3 point6(fValue, fValue, -fValue); //6
-	vector3 point7(-fValue, fValue, -fValue); //7
-
-											  //F
-	AddQuad(point0, point1, point3, point2);
-
-	//B
-	AddQuad(point5, point4, point6, point7);
-
-	//L
-	AddQuad(point4, point0, point7, point3);
-
-	//R
-	AddQuad(point1, point5, point2, point6);
-
-	//U
-	AddQuad(point3, point2, point7, point6);
-
-	//D
-	AddQuad(point4, point5, point0, point1);
+	// Replace this with your code
+	Mesh* pMesh = new Mesh();
+	pMesh->GenerateSphere(a_fRadius, a_nSubdivisions, a_v3Color);
+	m_lVertexPos = pMesh->GetVertexList();
+	m_uVertexCount = m_lVertexPos.size();
+	SafeDelete(pMesh);
+	// -------------------------------
 
 	// Adding information about color
 	CompleteMesh(a_v3Color);
