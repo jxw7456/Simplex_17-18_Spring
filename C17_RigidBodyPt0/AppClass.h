@@ -1,6 +1,6 @@
 /*----------------------------------------------
 Programmer: Alberto Bobadilla (labigm@gmail.com)
-Date: 2017/06
+Date: 2017/05
 ----------------------------------------------*/
 #ifndef __APPLICATIONCLASS_H_
 #define __APPLICATIONCLASS_H_
@@ -10,20 +10,24 @@ Date: 2017/06
 #include "ControllerConfiguration.h"
 #include "imgui\ImGuiObject.h"
 
-#include "MyMesh.h"
-
+#include "MyRigidBody.h"
 namespace Simplex
 {
-	//Adding Application to the Simplex namespace
+
 class Application
 {
-	std::vector<vector3> m_v3StopList; //List of stops
-	MyMesh* m_pMesh = nullptr; //MyMesh to draw
-	String m_sProgrammer = "JaJuan Webster - jxw7456@rit.edu";
+	vector3 m_v3Creeper; //position of the creeper
+	Model* m_pCreeper = nullptr; //model to display
+	Model* m_pSteve = nullptr; //model to display
+
+	MyRigidBody* m_pCreeperRB = nullptr; //Rigid Body of the model
+	MyRigidBody* m_pSteveRB = nullptr; //Rigid Body of the model
+	
+	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu"; //programmer
 
 private:
 	static ImGuiObject gui; //GUI object
-	
+
 	uint m_uRenderCallCount = 0; //count of render calls per frame
 	uint m_uControllerCount = 0; //count of controllers connected
 
@@ -31,15 +35,16 @@ private:
 	bool m_bFPC = false;// First Person Camera flag
 	bool m_bArcBall = false;// Arcball flag
 	quaternion m_qArcBall; //ArcBall quaternion
-	
+
 	vector4 m_v4ClearColor; //Color of the scene
 	bool m_bRunning = false; //Is app running?
+	bool m_bModifier = false; //is shift pressed?
 
 	sf::Window* m_pWindow = nullptr; //SFML window
-	SystemSingleton* m_pSystem = nullptr; //Singleton of the system
-	LightManager* m_pLightMngr = nullptr; //Light Manager of the system
-	MeshManager* m_pMeshMngr = nullptr; //MyMesh Manager
-	CameraManager* m_pCameraMngr = nullptr; //Singleton for the camera manager
+	Simplex::SystemSingleton* m_pSystem = nullptr; //Singleton of the system
+	Simplex::LightManager* m_pLightMngr = nullptr; //Light Manager of the system
+	Simplex::MeshManager* m_pMeshMngr = nullptr; //MyMesh Manager
+	Simplex::CameraManager* m_pCameraMngr = nullptr; //Singleton for the camera manager
 	ControllerInput* m_pController[8]; //Controller
 	uint m_uActCont = 0; //Active Controller of the Application
 
@@ -53,18 +58,18 @@ public:
 	Application();
 	/*
 	USAGE: Initializes the window and rendering context
-	ARGUMENTS: 
+	ARGUMENTS:
 	-	String a_sApplicationName -> Name of the window if blank will use project Name
 	-	int size -> formated size, relate to BTO_RESOLUTIONS
 	-	bool a_bFullscreen = false -> is the window fullscreen?
 	-	bool a_bBorderless = false -> is the window borderless?
 	OUTPUT: ---
 	*/
-	void Init(String a_sApplicationName = "", int a_uSize = BTO_RESOLUTIONS::RES_C_1280x720_16x9_HD,
+	void Init(String a_sApplicationName = "", int a_uSize = Simplex::BTO_RESOLUTIONS::RES_C_1280x720_16x9_HD,
 		bool a_bFullscreen = false, bool a_bBorderless = false);
 	/*
 	USAGE: Initializes the window and rendering context
-	ARGUMENTS: 
+	ARGUMENTS:
 	-	String a_sApplicationName = "" -> Name of the window if blank will use project Name
 	-	uint a_nWidth -> Window Width
 	-	uint a_nHeight -> Window Height
@@ -182,7 +187,7 @@ private:
 	*/
 	void CameraRotation(float a_fSpeed = 0.005f);
 #pragma endregion
-	
+
 #pragma region Process Events
 	/*
 	USAGE: Resizes the window
@@ -310,15 +315,16 @@ private:
 	OUTPUT: ---
 	*/
 	Application& operator=(Application const& input);
+	
 #pragma endregion
 };
 
-}//namespace Simplex
+} //namespace simplex
 
 #endif //__APPLICATIONCLASS_H_
 
- /*
- USAGE:
- ARGUMENTS: ---
- OUTPUT: ---
- */
+/*
+USAGE:
+ARGUMENTS: ---
+OUTPUT: ---
+*/

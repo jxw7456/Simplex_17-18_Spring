@@ -1,6 +1,6 @@
 /*----------------------------------------------
 Programmer: Alberto Bobadilla (labigm@gmail.com)
-Date: 2017/06
+Date: 2017/05
 ----------------------------------------------*/
 #ifndef __APPLICATIONCLASS_H_
 #define __APPLICATIONCLASS_H_
@@ -10,57 +10,38 @@ Date: 2017/06
 #include "ControllerConfiguration.h"
 #include "imgui\ImGuiObject.h"
 
-#include "MyRigidBody.h"
+#include "MyMesh.h"
 
-namespace Simplex
-{
-	//Adding Application to the Simplex namespace
 class Application
 {
-	vector3 m_v3Creeper; //position of the creeper
-	Model* m_pCreeper = nullptr; //model to display
-	Model* m_pSteve = nullptr; //model to display
+	MyMesh* m_pMesh = nullptr;
+	MyMesh* m_pMesh1 = nullptr;
 
-	quaternion m_qCreeper; //quaternion for the creeper
+	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
 
-	MyRigidBody* m_pCreeperRB = nullptr; //Rigid Body of the model
-	MyRigidBody* m_pSteveRB = nullptr; //Rigid Body of the model
-
-	String m_sProgrammer = "JaJuan Webster - jxw7456@rit.edu"; //programmer
+	float fFar = 17.0f;
+	float fDistance = 10.0f;
 private:
 	static ImGuiObject gui; //GUI object
-	bool m_bGUI_Main = true; //show Main GUI window?
-	bool m_bGUI_Console = true; //show Credits GUI window?
-	bool m_bGUI_Test = false; //show Test GUI window?
-	bool m_bGUI_Controller = false; //show Controller GUI window?
 
 	uint m_uRenderCallCount = 0; //count of render calls per frame
 	uint m_uControllerCount = 0; //count of controllers connected
 
-	bool m_bFocused = true; //is the window focused?
-
-	float m_fMovementSpeed = 0.1f; //how fast the camera will move
-
 	vector3 m_v3Mouse = vector3(); //position of the mouse in the window
 	bool m_bFPC = false;// First Person Camera flag
-	bool m_bArcBall = false;// ArcBall flag
+	bool m_bArcBall = false;// Arcball flag
 	quaternion m_qArcBall; //ArcBall quaternion
 
 	vector4 m_v4ClearColor; //Color of the scene
-	bool m_bRunning = false; //Is App running?
-	bool m_bModifier = false; //is shift pressed?
+	bool m_bRunning = false; //Is app running?
 
 	sf::Window* m_pWindow = nullptr; //SFML window
-	SystemSingleton* m_pSystem = nullptr; //Singleton of the system
-	LightManager* m_pLightMngr = nullptr; //Light Manager of the system
-	MeshManager* m_pMeshMngr = nullptr; //Mesh Manager
-	CameraManager* m_pCameraMngr = nullptr; //Singleton for the camera manager
+	Simplex::SystemSingleton* m_pSystem = nullptr; //Singleton of the system
+	Simplex::LightManager* m_pLightMngr = nullptr; //Light Manager of the system
+	Simplex::MeshManager* m_pMeshMngr = nullptr; //MyMesh Manager
+	Simplex::CameraManager* m_pCameraMngr = nullptr; //Singleton for the camera manager
 	ControllerInput* m_pController[8]; //Controller
 	uint m_uActCont = 0; //Active Controller of the Application
-
-	sf::SoundBuffer m_soundBuffer; //buffer to play sound from
-	sf::Sound m_sound; //sound effect
-	sf::Music m_soundBGM; //background music
 
 public:
 #pragma region Constructor / Run / Destructor
@@ -79,7 +60,7 @@ public:
 	-	bool a_bBorderless = false -> is the window borderless?
 	OUTPUT: ---
 	*/
-	void Init(String a_sApplicationName = "", int a_uSize = BTO_RESOLUTIONS::RES_C_1280x720_16x9_HD,
+	void Init(String a_sApplicationName = "", int a_uSize = Simplex::BTO_RESOLUTIONS::RES_C_1280x720_16x9_HD,
 		bool a_bFullscreen = false, bool a_bBorderless = false);
 	/*
 	USAGE: Initializes the window and rendering context
@@ -279,7 +260,7 @@ private:
 	*/
 	void InitIMGUI(void);
 	/*
-	USAGE: Draw GUI elements
+	USAGE: Draw gui elements
 	ARGUMENTS: ---
 	OUTPUT: ---
 	*/
@@ -329,10 +310,9 @@ private:
 	OUTPUT: ---
 	*/
 	Application& operator=(Application const& input);
+
 #pragma endregion
 };
-
-}//namespace Simplex
 
 #endif //__APPLICATIONCLASS_H_
 

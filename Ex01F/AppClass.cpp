@@ -12,36 +12,11 @@ void Application::Display(void)
 	fTimer += m_pSystem->GetDeltaTime(uClock); //get the delta time for that timer
 #pragma endregion
 	//Your code goes here ---------------------------------------------------------
-	// Control variable for stops
-	static int i = 0;
-
-	// Start Point
-	vector3 v3Start = m_v3StopList[i];
-
-	// End Point (depending on stopList size)
-	vector3 v3End = m_v3StopList[(i + 1) % m_v3StopList.size()];
-
-	// MapValue for percentage reset
-	float fMax = 2.0f;
-	float fPercent = MapValue(fTimer, 0.0f, fMax, 0.0f, 1.0f);
-
-	m_sProgrammer = "JaJuan Webster - jxw7456@rit.edu"; //Replace with your name and email
+	
+	m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu"; //Replace with your name and email
 	vector3 v3CurrentPos; //Initialize this variable accordingly
-	v3CurrentPos = glm::lerp(v3Start, v3End, fPercent); // Lerp through the List of Stop points
 	matrix4 m4Model = glm::translate(IDENTITY_M4, v3CurrentPos) * ToMatrix4(m_qArcBall);
 	
-	// If statement to go through the stop points
-	if (fPercent >= 1.0f)
-	{
-		// increment to the next stop point
-		i++;
-
-		// Reset the time
-		fTimer = m_pSystem->GetDeltaTime(uClock);
-
-		// If i has reached the end of the stopList then reset it back to the start
-		i %= m_v3StopList.size();
-	}
 	
 	//---------------------------------------------------------
 #pragma region DOES NOT NEED CHANGES
@@ -84,15 +59,15 @@ void Application::InitVariables(void)
 	m_pMesh = new Simplex::MyMesh();
 
 	//Generate a primitive
-	m_pMesh->GenerateCone(1.5f, 2.0f, 15, C_GREEN);
+	m_pMesh->GenerateCone(1.5f, 2.0f, 5, C_YELLOW);
 
 	//Check if stops is empty if it is add some points to it
 	if (m_v3StopList.size() == 0)
 	{
-		m_v3StopList.push_back(vector3(-2.5f,-2.5f,-2.5f));
-		m_v3StopList.push_back(vector3( 2.5f,-2.5f,-2.5f));
-		m_v3StopList.push_back(vector3( 2.5f, 2.5f, 2.5f));
-		m_v3StopList.push_back(vector3(-2.5f, 2.5f, 2.5f));
+		m_v3StopList.push_back(vector3());
+		m_v3StopList.push_back(vector3(2.5f, 0.0f, 0.0f));
+		m_v3StopList.push_back(vector3(-1.0f, 2.5f, 0.0f));
+		m_v3StopList.push_back(vector3(-2.5f));
 	}
 }
 void Application::Update(void)
