@@ -113,27 +113,26 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 		break;
 	case sf::Keyboard::PageUp:
 		++m_uOctantID;
-		/*
+		
 		if (m_uOctantID >= m_pRoot->GetOctantCount())
 			m_uOctantID = - 1;
-		*/
+		
 		break;
 	case sf::Keyboard::PageDown:
 		--m_uOctantID;
-		/*
+		
 		if (m_uOctantID >= m_pRoot->GetOctantCount())
 			m_uOctantID = - 1;
-		*/
+		
 		break;
 	case sf::Keyboard::Add:
 		if (m_uOctantLevels < 4)
 		{
 			m_pEntityMngr->ClearDimensionSetAll();
 			++m_uOctantLevels;
-			/*
+			
 			SafeDelete(m_pRoot);
 			m_pRoot = new MyOctant(m_uOctantLevels, 5);
-			*/
 		}
 		break;
 	case sf::Keyboard::Subtract:
@@ -141,11 +140,15 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 		{
 			m_pEntityMngr->ClearDimensionSetAll();
 			--m_uOctantLevels;
-			/*
+			
 			SafeDelete(m_pRoot);
 			m_pRoot = new MyOctant(m_uOctantLevels, 5);
-			*/
 		}
+		break;
+
+	// Turn on/off the visuals
+	case sf::Keyboard::O:
+		visual = !visual;
 		break;
 	case sf::Keyboard::LShift:
 	case sf::Keyboard::RShift:
@@ -415,7 +418,7 @@ void Application::ProcessKeyboard(void)
 	bool bMultiplier = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
 		sf::Keyboard::isKeyPressed(sf::Keyboard::RShift);
 
-	float fMultiplier = 1.0f;
+	float fMultiplier = 2.0f;
 
 	if (bMultiplier)
 		fMultiplier = 5.0f;
